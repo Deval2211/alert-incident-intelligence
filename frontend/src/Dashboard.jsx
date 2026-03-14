@@ -5,6 +5,7 @@ import {
   Tooltip, Legend, ResponsiveContainer, AreaChart, Area,
 } from "recharts";
 import AlertsSidebar from "./AlertsSidebar";
+import ChatBot from "./components/ChatBot";
 
 const API_BASE = "http://localhost:8000";
 const ALERT_FETCH_LIMIT = 5000;
@@ -844,6 +845,8 @@ export default function Dashboard({ onLogout }) {
         return <DevicesTab deviceCounts={deviceCounts} alerts={alerts} filteredAlerts={filteredAlerts} />;
       case "Analytics":
         return <AnalyticsTab alerts={alerts} severityCounts={severityCounts} deviceCounts={deviceCounts} filteredAlerts={filteredAlerts} />;
+      case "Copilot":
+        return <ChatBot apiBase={API_BASE} />;
       default:
         return (
           <div className="alerts-container">
@@ -868,7 +871,7 @@ export default function Dashboard({ onLogout }) {
       <aside className="sidebar" style={{ width: `${sidebarWidth}%` }}>
         <h2>🚨 Alert Intelligence</h2>
         <nav>
-          {["Dashboard", "Alerts", "Devices", "Analytics"].map((tab) => (
+          {["Dashboard", "Alerts", "Devices", "Analytics", "Copilot"].map((tab) => (
             <a
               key={tab}
               className={tab === activeTab || (tab === "Dashboard" && activeTab === "Alerts") ? "active" : ""}
@@ -895,7 +898,9 @@ export default function Dashboard({ onLogout }) {
           <h1>Alert Incident Intelligence Dashboard</h1>
           <button className="logout-btn" onClick={onLogout}>Logout</button>
         </header>
-        {!loading && !error && <FilterBar allAlerts={alerts} filters={filters} onFilterChange={setFilters} />}
+        {!loading && !error && activeTab !== "Copilot" && (
+          <FilterBar allAlerts={alerts} filters={filters} onFilterChange={setFilters} />
+        )}
         <section className="content">{renderContent()}</section>
       </main>
     </div>

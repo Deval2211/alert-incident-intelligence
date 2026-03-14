@@ -16,6 +16,7 @@ from parser.pipeline_service import (
     load_dotenv,
     parse_payload,
 )
+from .groq_chat import ChatRequest, chat_with_synthesis
 
 
 class IngestRequest(BaseModel):
@@ -92,6 +93,16 @@ def ingest_alerts(req: IngestRequest) -> dict[str, Any]:
         "incident_upserts": incident_rows,
         "table": f"{req.target_schema}.{req.table}",
     }
+
+
+@app.post("/chat")
+def chat(req: ChatRequest) -> dict[str, Any]:
+    try:
+        return chat_with_synthesis(question=req.question, top_k=req.top_k)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:  # pragma: no cover
+        raise HTTPException(status_code=500, detail=f"Chat failed: {exc}") from exc
 
 
 def fetch_alerts(
