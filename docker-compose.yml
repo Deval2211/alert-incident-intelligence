@@ -3,15 +3,15 @@ services:
     image: postgres:16-alpine
     container_name: alert-db
     environment:
-      POSTGRES_DB: alerts_db
-      POSTGRES_USER: parth
-      POSTGRES_PASSWORD: parth
+      POSTGRES_DB: ${PGDATABASE}
+      POSTGRES_USER: ${PGUSER}
+      POSTGRES_PASSWORD: ${PGPASSWORD}
     ports:
       - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U parth -d alerts_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${PGUSER} -d ${PGDATABASE}"]
       interval: 5s
       timeout: 3s
       retries: 20
@@ -27,9 +27,9 @@ services:
     environment:
       PGHOST: db
       PGPORT: 5432
-      PGDATABASE: alerts_db
-      PGUSER: parth
-      PGPASSWORD: parth
+      PGDATABASE: ${PGDATABASE}
+      PGUSER: ${PGUSER}
+      PGPASSWORD: ${PGPASSWORD}
     ports:
       - "8000:8000"
     restart: unless-stopped
